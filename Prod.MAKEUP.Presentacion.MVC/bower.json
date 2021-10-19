@@ -1,0 +1,25 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3.3.7",
+    "jquery": "3.1.1",
+    "knockout": "v3.4.2",
+    "knockout-mapping": "2.4.1",
+    "requirejs": "2.3.5",
+    "domReady": "2.0.1",
+    "moment": "2.19.1",
+    "font-awesome": "Font-Awesome#v4.7.0",
+    "bootstrap-tagsinput": "0.8.0",
+    "eonasdan-bootstrap-datetimepicker": "v4.17.45",
+    "knockstrap": "v1.4.0",
+    "bootbox.js": "bootbox#v4.4.0",
+    "pnotify": "3.2.1",
+    "jQuery-Validation-Engine": "2.6.4",
+    "blockui": "v2.65",
+    "holderjs": "holder.js#v2.9.4",
+    "jquery-bootstrap-scrolling-tabs": "v2.4.0",
+    "sweetalert2": "v7.29.0",
+    "knockout-file-bindings": "1.1.2"
+  }
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "outputFileName": "wwwroot/scripts/app/support/lib/pnotify/dist/pnotify.min.css",
+    "inputFiles": [
+      "wwwroot/scripts/app/support/lib/pnotify/dist/pnotify.css",
+      "wwwroot/scripts/app/support/lib/pnotify/dist/pnotify.brighttheme.css",
+      "wwwroot/scripts/app/support/lib/pnotify/dist/pnotify.buttons.css"
+    ]
+  },
+  //JS's
+  {
+    "outputFileName": "wwwroot/scripts/app/support/lib/pnotify/dist/pnotify.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/app/support/lib/pnotify/dist/pnotify.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "evalTreatment": "ignore"
+    }
+  },
+  {
+    "outputFileName": "wwwroot/scripts/app/support/lib/requirejs/require.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/app/support/lib/requirejs/require.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": false,
+      "evalTreatment": "ignore"
+    }
+  }/*,
+  {
+    "outputFileName": "wwwroot/scripts/app/support/lib/moment/moment.min.js",
+    "inputFiles": [
+      "wwwroot/scripts/app/support/lib/moment/moment.js",
+      "wwwroot/scripts/app/support/lib/moment/locale/es.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "evalTreatment": "ignore"
+    }
+  }
+  */
+]

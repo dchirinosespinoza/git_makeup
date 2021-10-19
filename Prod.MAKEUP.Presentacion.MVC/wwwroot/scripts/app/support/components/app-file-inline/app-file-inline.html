@@ -1,0 +1,133 @@
+﻿<form data-bind="attr : {id : upLoadFormName}" enctype="multipart/form-data">
+    <div class="input-group" data-bind="style: { display: fnMostrarAcciones()? 'table' : 'inherit' }">
+        <!-- ko if: DisplaySettings.mostrarCajaDeTexto() == true -->
+        <input type="text" class="form-control" aria-label="..." readonly="" data-bind="value : displayText,
+                                                                           visible : DisplaySettings.mostrarCajaDeTexto(),
+                                                                           css : DisplaySettings.claseTamañoInput()"
+               data-rol="displayText">
+        <!-- /ko -->
+        <input type="text" readonly="readonly" style="position:absolute;left:0; width:1px; height:1px;"
+               data-validation-engine="validate[required,custom[esArchivoRequerido],custom[esArchivoSubido]]"
+               data-bind="value : codigoValidacion()">
+        <div class="file-input-wrapper input-group-btn" data-bind="visible : fnMostrarAcciones()">
+            <input type="file" data-bind="value : inputFileValue,
+                                          enable: DisplaySettings.puedeCargarArchivo() && DisplaySettings.CargarArchivoHabilitado(),
+                                          event:{ change: fnFileSelect($element.files[0]) },
+                                          style:{ width : fnCalcularAnchoUploader() } ,
+                                          tooltip: { title: 'Seleccionar archivo' },
+                                          attr : { accept : FileSettings.tiposPermitidos() }"
+                   data-rol="fileuploader" />
+
+            <!-- ko if: DisplaySettings.puedeCargarArchivo() == true -->
+            <button type="button" class="btn btn-primary btn-file-input" data-bind="visible : DisplaySettings.puedeCargarArchivo(),
+                                                                           css : DisplaySettings.claseTamañoBoton()">
+                <i class="fa fa-paperclip"></i>
+            </button>
+            <!-- /ko -->
+            <!-- ko if: DisplaySettings.puedeCargarArchivo() == true -->
+            <button type="button" class="btn btn-primary btn-file-input" data-bind="click:fnFileUpload,
+                                                                        tooltip: { title: 'Enviar archivo' },
+                                                                        visible : DisplaySettings.puedeCargarArchivo(),
+                                                                        css : DisplaySettings.claseTamañoBoton(),
+                                                                        enable : fnArchivoSeleccionado() && DisplaySettings.CargarArchivoHabilitado()">
+                <i class="fa fa-upload"></i>
+            </button>
+            <!-- /ko -->
+            <!-- ko if: DisplaySettings.puedeDescargarArchivo() == true -->
+            <button type="button" class="btn btn-primary btn-file-input" data-bind="click:fnFileDownload.bind($data, 0),
+                                                                            tooltip: { title: 'Descargar archivo' },
+                                                                            visible : DisplaySettings.puedeDescargarArchivo(),
+                                                                            css : DisplaySettings.claseTamañoBoton(),
+                                                                            enable : fnCodigoArchivoSeleccionado() && DisplaySettings.DescargarArchivoHabilitado()">
+                <i class="fa fa-download"></i>
+            </button>
+            <!-- /ko -->
+            <!-- ko if: DisplaySettings.puedeEliminarArchivo() == true -->
+            <button type="button" class="btn btn-primary btn-file-input" data-bind="click:fnFileDelete,
+                                                                            tooltip: { title: 'Eliminar archivo' },
+                                                                            visible : DisplaySettings.puedeEliminarArchivo(),
+                                                                            css : DisplaySettings.claseTamañoBoton(),
+                                                                            enable : fnCodigoArchivoSeleccionado() && DisplaySettings.EliminarArchivoHabilitado()">
+                <i class="fa fa-trash"></i>
+            </button>
+            <!-- /ko -->
+            <!-- ko if: DisplaySettings.puedeVerHistorialArchivo() == true -->
+            <button data-rol="btnPopOver" type="button" role="button" data-placement="left" class="btn btn-primary btn-file-input"
+                    data-bind="attr : {id : viewHistoryTriggerId},
+                                tooltip: { title: 'Ver historial', placement : 'top' },
+                                click: fnFileViewHistory,
+                                visible : DisplaySettings.puedeVerHistorialArchivo(),
+                                css : DisplaySettings.claseTamañoBoton(),
+                                enable : fnCodigoArchivoSeleccionado() && DisplaySettings.VerHistorialArchivoHabilitado()">
+                <i class="fa fa-history"></i>
+            </button>
+            <!-- /ko -->
+
+        </div>
+    </div>
+</form>
+<div data-bind="attr : {id : viewHistoryContainerId}" style="display: none">
+    <div class="table-responsive">
+        <div class="form-horizontal container-fluid no-side-paddings">
+            <table class="table table-striped">
+                <colgroup>
+                    <col class="col-xs-5">
+                    <col class="col-xs-4">
+                    <col class="col-xs-2">
+                    <col class="col-xs-1">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Autor</th>
+                        <th>Creado</th>
+                        <th>Versión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ko if: HistoryStatus()==null -->
+                    <tr>
+                        <td colspan="100">Obteniendo datos históricos...</td>
+                    </tr>
+                    <!-- /ko -->
+                    <!-- ko if: HistoryStatus()!=null && HistoryStatus().Success==false -->
+                    <tr>
+                        <td colspan="100">
+                            <!-- ko foreach: { data: HistoryStatus().Messages, as: 'msg' } -->
+                            <ul>
+                                <li data-bind="text:msg"></li>
+                            </ul>
+                            <!-- /ko -->
+                        </td>
+                    </tr>
+                    <!-- /ko -->
+                    <!-- ko if: HistoryStatus()!=null && HistoryStatus().Success ==true -->
+                    <!-- ko foreach: { data: HistoryDataSource, as: 'row' } -->
+                    <tr>
+                        <td data-bind="text:row.descripcion"></td>
+                        <td>
+                            <i class="fa fa-user" data-bind="attr : { title : row.usuarioCreacion.userName}"></i>
+                            <span data-bind="text:(row.usuarioCreacion.userName.split(',')[0])"></span>
+
+                        </td>
+                        <td data-bind="text:row.fechaCreacion"></td>
+                        <td class=" text-center td-action">
+                            <button type="button" class="btn btn-primary btn-sm"
+                                    data-bind="attr:{ data_version : row.version, data_rol:'btnDownloadVersion'}">
+
+                                v<span data-bind="text: row.version"></span>&nbsp;
+                                <i class="fa fa-download"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- ko if: debugMode == true -->
+<pre data-bind="text : JSON.stringify(ko.mapping.toJS($component), undefined, 2) "></pre>
+<!-- /ko -->

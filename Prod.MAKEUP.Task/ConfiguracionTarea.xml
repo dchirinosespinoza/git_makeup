@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <tareas estado = "ON">
+    <tarea id="EjecutaExtraccionOperation">
+      <estado>ON</estado>
+      <dias>LUN,MAR,MIE,JUE,VIE,SAB,DOM</dias>
+      <hora>00:00:00</hora>
+      <intervalo>00:00:00:30:00</intervalo>
+      <ejecucion_inmediata>1</ejecucion_inmediata>      
+    </tarea>      
+  </tareas>
+</configuration>

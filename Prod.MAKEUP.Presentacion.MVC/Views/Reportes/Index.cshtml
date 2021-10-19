@@ -1,0 +1,125 @@
+﻿
+@using Release.Helper.WebKoMvc.Extensions
+
+<ol class="breadcrumb">
+    <li><a href="@Html.ResourcePath("Home/Index")">Inicio</a></li>
+    <li class="active">Reportes</li>
+</ol>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-header-custom">
+            <h1 class="title-custom">Reportes</h1>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-custom">
+    <div class="panel-heading">
+        Reportes
+    </div>
+    <div class="panel-body">
+        <fieldset>
+            <legend>Seleccione el reporte</legend>
+            <!--ko foreach:TiposReportes-->
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" data-bind="value:RDL,checked:$root.Filtro.Reporte">
+                    <span data-bind="text:Nombre"></span>
+                </label>
+            </div>
+            <!--/ko-->
+        </fieldset>
+        <!--ko if:(Filtro.Reporte()!="PersonasReporteConsolidado")-->
+        <fieldset>
+            <legend>Filtros</legend>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="">Tipo persona</label>
+                        <select class="form-control" data-bind="value:Filtro.TipoPersona">
+                            <option value="-1">--TODOS--</option>
+                            <option value="1">NATURAL</option>
+                            <option value="2">JURÍDICA</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="">Fecha de creación de registro</label>
+                        <div class='input-group date' data-bind="dateTimePicker: {value:Filtro.FechaInicio}, beforeOf: new Date()">
+                            <input id="txtFechaInicio" data-bind="value:Filtro.FechaInicio" type="text" class="form-control">
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="">Hasta</label>
+                        <div class='input-group date' data-bind="dateTimePicker: {value:Filtro.FechaFin}, beforeOf: new Date()">
+                            <input id="txtFechaFin" data-bind="value:Filtro.FechaFin" type="text" class="form-control">
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--ko if:(Filtro.Reporte()=="PersonasPorUbigeo")-->
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Departamento</label>
+                        <select class="form-control input-sm"
+                                data-bind="options: Departamentos,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--seleccione--',
+                                                event:{change:DepartamentoChange},
+                                                value:Filtro.Departamento
+                                                "></select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Provincia</label>
+                        <select class="form-control input-sm"
+                                data-bind="options:Provincias,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--todos--',
+                                                event:{change:ProvinciaChange},
+                                                value:Filtro.Provincia
+                                                "></select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="requerido">Distrito</label>
+                        <select class="form-control input-sm"
+                                data-bind="options:Distritos,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--todos--',
+                                                value:Filtro.Distrito
+                                                "></select>
+                    </div>
+                </div>
+            </div>
+            <!--/ko-->
+        </fieldset>
+        <!--/ko-->
+
+    </div>
+    <div class="panel-footer text-center">
+        @*<button type="button" class="btn btn-primary-custom"><i class="fa fa-search" aria-hidden="true"></i> Generar</button>*@
+        <button type="button" class="btn btn-default-custom" data-bind="click:Limpiar"><i class="fa fa-eraser" aria-hidden="true"></i> Limpiar</button>
+        <button type="button" class="btn btn-success" data-bind="click:DescargarExcel"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Exportar en EXCEL</button>
+        <button type="button" class="btn btn-danger" data-bind="click:DescargarPdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exportar en PDF</button>
+    </div>
+</div>
+
+
+@section scripts {
+    @Html.InitPageMainModule("views/reportes/index")
+}

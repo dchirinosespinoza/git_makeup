@@ -1,0 +1,92 @@
+﻿<div class="row">
+    <div class="col-sm-4">
+        <div class="form-inline cant-reg mb-6">
+            <label>
+                Mostrar
+                <select class="form-control input-sm"
+                        data-bind="options: pageSizeLength,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                value:Grid.pageSize
+                                                "></select>
+                registros
+            </label>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="text-right mb-6">
+            <button type="button" class="btn btn-secondary-custom" data-bind="click:AnularPrestamo"><i class="fa fa-ban" aria-hidden="true"></i> Anular Préstamo</button>
+            <button type="button" class="btn btn-secondary-custom" data-bind="click:Exportar"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Exportar</button>
+        </div>
+    </div>
+</div>
+
+<!--GRILLA-->
+<div class="table-responsive">
+    <table class="table table-custom table-striped table-bordered table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th style="display:none;">N° C.P.</th>
+                <th>Nro. Comprobante</th>
+                <!--<th>Usuario</th>
+    <th>Usuario Código</th>-->
+                <th>Oficina</th>
+                <th>Código Oficina</th>
+                <th>Fecha Préstamo</th>
+                <th>Fecha Devolución</th>
+                <th>Días Préstamo</th>
+                <th>Estado</th>
+                <th style="display:none;">Doc.Prestamo</th>
+                <th style="display:none;">Anio</th>
+                <th style="min-width:90px;">Acciones</th>
+            </tr>
+        </thead>
+        <!-- ko if: Grid.TotalRows() > 0 -->
+        <tbody data-bind="foreach: Grid.Data">
+            <tr data-bind="style:{ backgroundColor: estado() == '0' ? 'lightpink' : id_estado_prestamo() == '1' ? 'lightblue' : 'white'}">
+                <td data-bind="text:($index()+1)"></td>
+                <td data-bind="text:id_comprobante_pago" style="display:none;"></td>
+                <td data-bind="text:numero_comprobante_pago"></td>
+                <!--<td data-bind="text:usuario_prestamo"></td>
+    <td data-bind="text:usuario_prestamo_codigo"></td>-->
+                <td data-bind="text:dependencia"></td>
+                <td data-bind="text:codigo_dependencia"></td>
+                <td data-bind="text:fecha_prestamo_str"></td>
+                <td data-bind="text:fecha_devolucion_str"></td>
+                <td>
+                    <span class="badge" data-bind="text:dias_prestamo"></span>
+                    <!-- ko if: (dias_prestamo() > dias_en_prestamo() && estado() != '0') -->
+                    <span class="label label-success" data-bind="text: id_estado_prestamo() == '1' ? 'En fecha' : ''"></span>
+                    <!-- /ko -->
+                    <!-- ko if: (dias_prestamo() == dias_en_prestamo() && estado() != '0') -->
+                    <span class="label label-warning" data-bind="text: id_estado_prestamo() == '1' ? 'En fecha' : ''"></span>
+                    <!-- /ko -->
+                    <!-- ko if: (dias_prestamo() < dias_en_prestamo() && estado() != '0') -->
+                    <span class="label label-danger" data-bind="text: id_estado_prestamo() == '1' ? 'Fuera de fecha' : ''"></span>
+                    <!-- /ko -->
+                </td>
+                <td data-bind="text:des_estado_prestamo"></td>
+                <td data-bind="text:documento_prestamo" style="display:none;"></td>
+                <td data-bind="text:anio" style="display:none;"></td>
+                <td>
+                    <button class="btn btn-sm btn-primary-custom" data-bind="click:$component.Editar, visible: des_estado_prestamo()=='EN PRESTAMO'"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-sm btn-primary-custom" data-bind="click:$component.Consultar"><i class="fa fa-search"></i></button>
+                    <label class="radio-inline" data-bind="click:$component.Radio, checked: opt">
+                        <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> &nbsp;
+                    </label>
+                </td>
+            </tr>
+
+        </tbody>
+        <!-- /ko -->
+        <!-- ko if: Grid.TotalRows() == 0 -->
+        <tbody>
+            <tr>
+                <td colspan="13">No se encontraron registros</td>
+            </tr>
+        </tbody>
+        <!-- /ko -->
+    </table>
+</div>
+<app-paginator params="grid: Grid"></app-paginator>

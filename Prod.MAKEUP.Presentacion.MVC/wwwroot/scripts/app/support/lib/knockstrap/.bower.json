@@ -1,0 +1,45 @@
+{
+  "name": "knockstrap",
+  "version": "1.4.0",
+  "description": "Knockout bindings to Twitter Bootstrap 3 widgets",
+  "main": "build/knockstrap.js",
+  "homepage": "http://faulknercs.github.io/Knockstrap/",
+  "ignore": [
+    "src",
+    "examples",
+    "examples-src",
+    "node_modules",
+    "tests",
+    ".gitignore",
+    ".npmignore",
+    ".jamignore",
+    ".travis.yml",
+    "knockstrap.nuspec",
+    "Gruntfile.js"
+  ],
+  "keywords": [
+    "knockout",
+    "bootstrap",
+    "knockstrap",
+    "custom",
+    "bindings",
+    "library",
+    "templates"
+  ],
+  "author": "Artem Stepanyuk",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": ">=1.9.0",
+    "knockout": ">=2.3.0",
+    "bootstrap": "~3"
+  },
+  "_release": "1.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.4.0",
+    "commit": "12ca7f0bd295185d8379dd571ca48c0990f22f6c"
+  },
+  "_source": "https://github.com/faulknercs/Knockstrap.git",
+  "_target": "v1.4.0",
+  "_originalSource": "knockstrap"
+}

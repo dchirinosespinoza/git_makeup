@@ -1,0 +1,925 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ include file="EF6.Utility.CS.ttinclude"#>
+
+<#@ import namespace="System" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Microsoft.Win32" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+
+
+
+<#@ output extension=".cs"#>
+<#
+
+#>
+<#
+var textTransform = DynamicTextTransformation.Create(this);
+var code = new CodeGenerationTools(this);
+var ef = new MetadataTools(this);
+var typeMapper = new TypeMapper(code, ef, textTransform.Errors);
+var	fileManager = EntityFrameworkTemplateFileManager.Create(this);
+var codeStringGenerator = new CodeStringGenerator(code, typeMapper, ef);
+
+var hostServiceProvider = (IServiceProvider)Host;
+var dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+var activeSolutionProjects = (Array)dte.ActiveSolutionProjects;
+var dteProject = (EnvDTE.Project)activeSolutionProjects.GetValue(0);
+
+var fullPath = dteProject.Properties.Item("FullPath").Value.ToString();
+var fileXml = Path.Combine(fullPath,"Enumerados.xml");
+var fecha=DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss");
+
+string cadena = "Data Source=SRVSQLDEV01;Initial Catalog=DB_COMPA;User Id=usr_compa;Password=compamiau;";
+
+SqlConnection _cnxRap = new SqlConnection(cadena);
+
+if (_cnxRap.State != ConnectionState.Open)
+{
+	_cnxRap.Open();
+}
+
+string dataXML = System.IO.File.ReadAllText(fileXml);
+var entidades = (from el in XElement.Parse(dataXML, LoadOptions.None).Elements("entidad")
+                from e in el.Elements("add")
+                select new Entidad
+                {
+                    NombreTabla = (e.Attribute("NombreTabla") == null) ? null : e.Attribute("NombreTabla").Value,
+                    NombreEnumerado = (e.Attribute("NombreEnumerado") == null) ? (e.Attribute("NombreTabla") == null) ? null : e.Attribute("NombreTabla").Value : e.Attribute("NombreEnumerado").Value,
+					Sql = (e.Attribute("Sql") == null) ? null : e.Attribute("Sql").Value,
+                    Codigo = (e.Attribute("Codigo") == null) ? null : e.Attribute("Codigo").Value,
+                    Descripcion = (e.Attribute("Descripcion") == null) ? null : e.Attribute("Descripcion").Value,
+                }).ToList();
+var grupo = (from el in XElement.Parse(dataXML, LoadOptions.None).Elements("grupo")
+                from e in el.Elements("add")
+                select new Entidad
+                {
+                    NombreTabla = (e.Attribute("NombreTabla") == null) ? null : e.Attribute("NombreTabla").Value,
+                    Sql = (e.Attribute("Sql") == null) ? null : e.Attribute("Sql").Value                    
+                }).ToList();
+
+//BEGIN JS =>
+fileManager.StartNewFile("enumerado.js");
+BeginNamespaceJs(code);
+   
+#>
+   
+<#
+    //A=>
+foreach (var entidad in entidades)
+{
+	string nombreEnumerado = GeneraNombre(entidad.NombreEnumerado);   
+	string sqlStatement;
+
+    if (string.IsNullOrWhiteSpace(entidad.Sql))
+    {
+        sqlStatement = string.Format("SELECT Codigo = {0},Enumerado = UPPER({1}) FROM {2} ORDER BY {0};",entidad.Codigo,entidad.Descripcion,entidad.NombreTabla); 	 
+    }
+	else {
+		sqlStatement = entidad.Sql;
+	}	
+	List<Resultado> resultado = new List<Resultado>();
+	using (var cmd = new SqlCommand())
+    {
+        cmd.Connection = _cnxRap;
+        resultado = new T4Helper().ExecuteReader<Resultado>(cmd, sqlStatement, CommandType.Text).ToList();              
+    }    
+    resultado.Insert(0, new Resultado { Enumerado = "NONE", Codigo = 0 });    
+#>          
+    "<#=nombreEnumerado#>" : 
+	    {
+<#	 
+    foreach (var row in resultado)
+	{
+        string nEnumerado = ReplaceValue(row.Enumerado);            
+	    string rerow = string.Format("  {0} : {1},", nEnumerado, row.Codigo);
+#>
+		<#=rerow#> 
+<#
+	}
+#>
+	    },    
+<#
+    
+}
+    //A <=
+    //B =>
+foreach (var entidad in grupo)
+{
+	string nombreEnumerado = GeneraNombre(entidad.NombreTabla);        
+	List<Resultado> resultado = new List<Resultado>();
+	using (var cmd = new SqlCommand())
+    {
+        cmd.Connection = _cnxRap;
+        resultado = new T4Helper().ExecuteReader<Resultado>(cmd, entidad.Sql, CommandType.Text).ToList();              
+    }
+    foreach (var re in resultado)
+    {
+      //re.NombreTabla = re.NombreTabla.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
+      re.NombreTabla = ReplaceValue(re.NombreTabla);
+            
+    }
+    var tablas = resultado.GroupBy(x => new { x.NombreTabla }).Select(y => y.Key.NombreTabla).ToList();
+    foreach (var tabla in tablas)
+    {
+    var items = resultado.Where(x => x.NombreTabla == tabla).ToList();
+    items.Insert(0, new Resultado { Enumerado = "NONE", Codigo = 0 });
+#>        
+    "<#=tabla#>" : 
+	    {
+<#	 
+    foreach (var re in items)
+	{
+        string nEnumerado = ReplaceValue(re.Enumerado);            
+	    string rerow = string.Format("{0} : {1},", nEnumerado, re.Codigo);
+#>
+		<#=rerow#> 
+<#
+	}
+#>
+	    },    
+<#
+    }
+}
+    //B <=
+EndNamespaceJs(code);
+//END JS =>
+//BEGIN entidad
+
+foreach (var entidad in entidades)
+{
+	string nombreEnumerado = GeneraNombre(entidad.NombreEnumerado);
+    fileManager.StartNewFile(nombreEnumerado + ".cs");
+	string sqlStatement;
+
+    if (string.IsNullOrWhiteSpace(entidad.Sql))
+    {
+        sqlStatement = string.Format("SELECT Codigo = {0},Enumerado = UPPER({1}) FROM {2} ORDER BY {0};",entidad.Codigo,entidad.Descripcion,entidad.NombreTabla); 	 
+    }
+	else {
+		sqlStatement = entidad.Sql;
+	}	
+	List<Resultado> resultado = new List<Resultado>();
+	using (var cmd = new SqlCommand())
+    {
+        cmd.Connection = _cnxRap;
+        resultado = new T4Helper().ExecuteReader<Resultado>(cmd, sqlStatement, CommandType.Text).ToList();              
+    }    
+    resultado.Insert(0, new Resultado { Enumerado = "NONE", Codigo = 0 });
+    BeginNamespace(code);
+#>   
+    //[Serializable]
+	public enum <#=nombreEnumerado#> 
+	{
+<#	 
+    foreach (var re in resultado)
+	{        
+        string nEnumerado = ReplaceValue(re.Enumerado);            
+	    string rerow = string.Format("{0} = {1},", nEnumerado, re.Codigo);
+#>
+		<#=rerow#> 
+<#
+	}
+#>
+	}   
+<#
+    EndNamespace(code);
+}
+
+//END entidad
+//BEGIN grupo
+foreach (var entidad in grupo)
+{
+	string nombreEnumerado = GeneraNombre(entidad.NombreTabla);        
+	List<Resultado> resultado = new List<Resultado>();
+	using (var cmd = new SqlCommand())
+    {
+        cmd.Connection = _cnxRap;
+        resultado = new T4Helper().ExecuteReader<Resultado>(cmd, entidad.Sql, CommandType.Text).ToList();              
+    }
+    foreach (var re in resultado)
+    {
+      //re.NombreTabla = re.NombreTabla.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
+      re.NombreTabla = ReplaceValue(re.NombreTabla);
+            
+    }
+    var tablas = resultado.GroupBy(x => new { x.NombreTabla }).Select(y => y.Key.NombreTabla).ToList();
+    foreach (var tabla in tablas)
+    {
+    var items = resultado.Where(x => x.NombreTabla == tabla).ToList();
+    items.Insert(0, new Resultado { Enumerado = "NONE", Codigo = 0 });
+
+    string query = string.Format("SELECT * FROM ({0}) AS T WHERE T.NombreTabla LIKE '{1}%'",entidad.Sql,tabla);
+    fileManager.StartNewFile(tabla + ".cs");
+    BeginNamespace(code);
+#>   
+    //[Serializable]
+    public enum <#=tabla#>
+    {
+<#
+   foreach (var re in items)
+    {
+    string nEnumerado = ReplaceValue(re.Enumerado);            
+	string rerow = string.Format("{0} = {1},", nEnumerado, re.Codigo);
+    #>
+    <#=rerow#>
+    <#
+    }
+#>
+}
+<#
+EndNamespace(code);
+    }
+}
+//END grupo
+fileManager.Process();
+
+#>
+<#+
+
+public void WriteHeader(CodeStringGenerator codeStringGenerator, EntityFrameworkTemplateFileManager fileManager)
+{
+    fileManager.StartHeader();
+#>
+<#=codeStringGenerator.UsingDirectives(inHeader: true)#>
+<#+
+    fileManager.EndBlock();
+}
+
+public string GeneraNombre(string nombre)
+{
+	var nombres = nombre.Split('.');
+	var name = nombres.Last();
+	return name.ToUpper();
+}
+public string ReplaceValue(string value)
+{
+    string nvalue = Regex.Replace(value, @"[^\w\.@-]", "_", RegexOptions.None, TimeSpan.FromSeconds(1.5));
+    var normalizedString = nvalue.Normalize(NormalizationForm.FormD);
+    var sb = new StringBuilder();
+    foreach (char t in normalizedString)
+    {
+        var uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(t);
+        if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+        {
+            sb.Append(t);
+        }
+    }
+    string vf = (sb.ToString().Normalize(NormalizationForm.FormC));
+    return MinifyValue(vf);
+}
+public string MinifyValue(string p)
+{
+    StringBuilder b = new StringBuilder(p);
+    //b.Replace("_____", "_"); //5_
+    //b.Replace("____", "_"); //4_
+    b.Replace("___", "_"); //3_
+    b.Replace("__", "_"); //2_
+    b.Replace("_-_", "_");
+    b.Replace(".", "");
+    b.Replace("-", "_");
+    b.Replace(Environment.NewLine, "_");
+
+    string txt = b.ToString();
+    int intParsed;
+    
+    if (int.TryParse(txt.Substring(0, 1), out intParsed))
+    {
+        txt = "_" + txt;
+    }
+    return txt.TrimEnd('_').ToUpper();
+}
+public void BeginNamespace(CodeGenerationTools code)
+{
+#>
+//===================================================================================
+// Template T4 for Enum
+//===================================================================================
+using System;
+
+namespace <#=code.EscapeNamespace(code.VsNamespaceSuggestion())#>
+{
+<#+
+}
+public void BeginNamespaceJs(CodeGenerationTools code)
+{
+var fecha=DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss");
+#>
+/*===================================================================================
+ Template T4 for enumerado.js
+ <#=fecha#>
+====================================================================================*/
+define([], function () {
+    "use strict";
+
+    return {    
+<#+
+}
+public void EndNamespace(CodeGenerationTools code)
+{
+#>
+}
+<#+
+}
+public void EndNamespaceJs(CodeGenerationTools code)
+{
+#>
+        DescripcionEnumerado(codigo) {
+            var enumerado = this.ENUMERADOS.find(function (item) {
+                return item.Value == codigo;
+            });
+            return enumerado == null ? '' : enumerado.Text;
+        },
+        DescripcionTipo(codigo) {
+            var enumerado = this.TIPOS.find(function (item) {
+                return item.Value == codigo;
+            });
+            return enumerado == null ? '' : enumerado.Text;
+        },
+		EnumeradoPadre(codigo) {
+            var enumerado = this.ENUMERADOS.find(function (item) {
+                return item.Value == codigo;
+            });
+            return enumerado == null ? '' : enumerado.TypeFather;
+        }
+    };
+});
+<#+
+}
+
+public class Resultado
+{
+    public string Value { get; set; }
+        
+    public string NombreTabla { get; set; }
+    public int Codigo { get; set; }
+    public string Enumerado { get; set; }
+    
+}
+public class Entidad
+{
+    public string Codigo { get; set; }
+    public string Descripcion { get; set; }
+    public string NombreTabla { get; set; }
+	public string Sql { get; set; }
+	public string NombreEnumerado { get; set; }
+}
+public class T4Helper
+    {
+		
+        public IEnumerable<T> ExecuteReader<T>(SqlCommand cmd, string sqlText, CommandType commandType = CommandType.StoredProcedure, Dictionary<string, object> parameters = null, int? commandTimeout = null)
+        {
+            var items = new List<T>();
+					
+
+            cmd.CommandText = sqlText;
+            cmd.Parameters.Clear();
+            cmd.CommandType = commandType;
+            cmd.CommandTimeout = commandTimeout.HasValue ? commandTimeout.Value : cmd.CommandTimeout;
+
+            if (parameters != null)
+            {
+                var arrp = parameters.Select(p => new SqlParameter(p.Key, p.Value ?? (object)DBNull.Value)).ToArray();
+                cmd.Parameters.AddRange(arrp);
+            }
+            using (var dr = cmd.ExecuteReader())
+            {
+                if (dr.HasRows)
+                {
+                    int fc = dr.FieldCount;
+
+                    var colums = new Dictionary<int, string>();
+                    for (int i = 0; i < fc; i++)
+                        colums.Add(i, dr.GetName(i));
+
+                    object[] values = new object[fc];
+
+                    while (dr.Read())
+                    {
+                        dr.GetValues(values); //Get All Values
+                        T item = Activator.CreateInstance<T>();
+                        var props = item.GetType().GetProperties();
+
+                        foreach (var p in props)
+                        {
+                            foreach (var col in colums)
+                            {
+                                if (p.Name != col.Value) continue;
+
+                                var value = values[col.Key];
+                                if (value.GetType() != typeof(DBNull))
+                                {
+                                    p.SetValue(item, value, null);
+                                }
+                            }
+                        }
+                        items.Add(item);
+                    }
+                }
+            }
+
+            return items;
+        }
+        public string ExecuteXmlReader(SqlCommand cmd, string sqlText, CommandType commandType = CommandType.StoredProcedure, Dictionary<string, object> parameters = null, int? commandTimeout = null)
+        {
+            var xmlSb = new System.Text.StringBuilder();
+
+            cmd.CommandText = sqlText;
+            cmd.Parameters.Clear();
+            cmd.CommandType = commandType;
+            cmd.CommandTimeout = commandTimeout.HasValue ? commandTimeout.Value : cmd.CommandTimeout;
+
+            if (parameters != null)
+            {
+                var arrp = parameters.Select(p => new SqlParameter(p.Key, p.Value ?? (object)DBNull.Value)).ToArray();
+                cmd.Parameters.AddRange(arrp);
+            }
+            using (var dr = cmd.ExecuteReader())
+            {
+                if (!dr.HasRows)
+                {
+                    cmd.Parameters.Clear();
+                    return null;
+                }
+                while (dr.Read())
+                {
+                    if (dr.GetValue(0).GetType() != typeof(DBNull))
+                    {
+                        xmlSb.Append((string)dr.GetValue(0));
+                    }
+                }
+            }            
+            cmd.Parameters.Clear();
+            return xmlSb.ToString();
+        }
+       
+    }
+public class RegeditManager
+    {
+        #region Registro
+
+        public enum RegistrySection : byte
+        {
+            LocalMachine = 0,
+            CurrentUser = 1
+        }
+		/*
+        public static object Read(string applicationKey, string applicationSubKey, bool isEncrypted = false)
+        {
+            string value = (string)Read(RegistrySection.LocalMachine, applicationKey, applicationSubKey);
+
+            return isEncrypted ? Functions.Decrypt(value) : value;
+        }
+		*/
+        public static object Read(string applicationKey, string applicationSubKey, object defaultValue = null)
+        {
+            return Read(RegistrySection.LocalMachine, applicationKey, applicationSubKey, defaultValue);
+        }
+
+        public static object Read(RegistrySection registrySection,
+                                  string applicationKey,
+                                  string applicationSubKey,
+                                  object defaultValue = null)
+        {
+            if (string.IsNullOrWhiteSpace(applicationKey))
+                applicationKey = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(applicationSubKey))
+                applicationSubKey = string.Empty;
+
+            RegistryKey objSoftwareRegistryKey = GetSoftwareRegistryKey(registrySection);
+
+            if ((objSoftwareRegistryKey != null))
+            {
+                // Leer Clave de la aplicacion
+                RegistryKey objApplicationKey = default(RegistryKey);
+                //64Bits
+                objApplicationKey = objSoftwareRegistryKey.OpenSubKey(string.Concat("Wow6432Node\\", applicationKey), false);
+
+                if (objApplicationKey == null) //32Bits
+                    objApplicationKey = objSoftwareRegistryKey.OpenSubKey(applicationKey, false);
+
+                if ((objApplicationKey != null))
+                {
+                    // Leer Sub Clave de la aplicacion
+                    object objValue = null;
+                    objValue = objApplicationKey.GetValue(applicationSubKey, defaultValue);
+
+                    if ((objValue != null))
+                    {
+                        // Leer Valor de la aplicacion
+                        return objValue;
+                    }
+                    else
+                    {
+                        throw new Exception("Clave de registro no hallada " + applicationSubKey);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Clave de registro no hallada " + applicationKey);
+                }
+            }
+            else
+            {
+                throw new Exception("No se indicó la sección del registro que se desea leer");
+            }
+        }
+
+        private static RegistryKey GetSoftwareRegistryKey(RegistrySection registrySection)
+        {
+            RegistryKey objSoftwareRegistryKey = null;
+            switch (registrySection)
+            {
+                case RegistrySection.LocalMachine:
+                    objSoftwareRegistryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("Software");
+                    break;
+
+                case RegistrySection.CurrentUser:
+                    objSoftwareRegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software");
+                    break;
+            }
+            if (objSoftwareRegistryKey == null)
+            {
+                throw new Exception("No se pudo localizar la clave de registro Software o no se tiene acceso");
+            }
+            else
+            {
+                return objSoftwareRegistryKey;
+            }
+        }
+
+        #endregion Registro
+    }
+public class CodeStringGenerator
+{
+    private readonly CodeGenerationTools _code;
+    private readonly TypeMapper _typeMapper;
+    private readonly MetadataTools _ef;
+
+    public CodeStringGenerator(CodeGenerationTools code, TypeMapper typeMapper, MetadataTools ef)
+    {
+        ArgumentNotNull(code, "code");
+        ArgumentNotNull(typeMapper, "typeMapper");
+        ArgumentNotNull(ef, "ef");
+
+        _code = code;
+        _typeMapper = typeMapper;
+        _ef = ef;
+    }
+
+    public string Property(EdmProperty edmProperty)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} {1} {2} {{ {3}get; {4}set; }}",
+            Accessibility.ForProperty(edmProperty),
+            _typeMapper.GetTypeName(edmProperty.TypeUsage),
+            _code.Escape(edmProperty),
+            _code.SpaceAfter(Accessibility.ForGetter(edmProperty)),
+            _code.SpaceAfter(Accessibility.ForSetter(edmProperty)));
+    }
+
+    public string NavigationProperty(NavigationProperty navProp)
+    {
+        var endType = _typeMapper.GetTypeName(navProp.ToEndMember.GetEntityType());
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} {1} {2} {{ {3}get; {4}set; }}",
+            AccessibilityAndVirtual(Accessibility.ForNavigationProperty(navProp)),
+            navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many ? ("ICollection<" + endType + ">") : endType,
+            _code.Escape(navProp),
+            _code.SpaceAfter(Accessibility.ForGetter(navProp)),
+            _code.SpaceAfter(Accessibility.ForSetter(navProp)));
+    }
+    
+    public string AccessibilityAndVirtual(string accessibility)
+    {
+        return accessibility + (accessibility != "private" ? " virtual" : "");
+    }
+    
+    public string EntityClassOpening(EntityType entity)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} {1}partial class {2}{3}",
+            Accessibility.ForType(entity),
+            _code.SpaceAfter(_code.AbstractOption(entity)),
+            _code.Escape(entity),
+            _code.StringBefore(" : ", _typeMapper.GetTypeName(entity.BaseType)));
+    } 
+
+    public string UsingDirectives(bool inHeader, bool includeCollections = true)
+    {
+        return inHeader == string.IsNullOrEmpty(_code.VsNamespaceSuggestion())
+            ? string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}using System;{1}" +
+                "{2}",
+                inHeader ? Environment.NewLine : "",
+                includeCollections ? (Environment.NewLine + "using System.Collections.Generic;") : "",
+                inHeader ? "" : Environment.NewLine)
+            : "";
+    }
+}
+
+public class TypeMapper
+{
+    private const string ExternalTypeNameAttributeName = @"http://schemas.microsoft.com/ado/2006/04/codegeneration:ExternalTypeName";
+
+    private readonly System.Collections.IList _errors;
+    private readonly CodeGenerationTools _code;
+    private readonly MetadataTools _ef;
+
+    public TypeMapper(CodeGenerationTools code, MetadataTools ef, System.Collections.IList errors)
+    {
+        ArgumentNotNull(code, "code");
+        ArgumentNotNull(ef, "ef");
+        ArgumentNotNull(errors, "errors");
+
+        _code = code;
+        _ef = ef;
+        _errors = errors;
+    }
+
+    public static string FixNamespaces(string typeName)
+    {
+        return typeName.Replace("System.Data.Spatial.", "System.Data.Entity.Spatial.");
+    }
+
+    public string GetTypeName(TypeUsage typeUsage)
+    {
+        return typeUsage == null ? null : GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace: null);
+    }
+
+    public string GetTypeName(EdmType edmType)
+    {
+        return GetTypeName(edmType, isNullable: null, modelNamespace: null);
+    }
+
+    public string GetTypeName(TypeUsage typeUsage, string modelNamespace)
+    {
+        return typeUsage == null ? null : GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace);
+    }
+
+    public string GetTypeName(EdmType edmType, string modelNamespace)
+    {
+        return GetTypeName(edmType, isNullable: null, modelNamespace: modelNamespace);
+    }
+
+    public string GetTypeName(EdmType edmType, bool? isNullable, string modelNamespace)
+    {
+        if (edmType == null)
+        {
+            return null;
+        }
+
+        var collectionType = edmType as CollectionType;
+        if (collectionType != null)
+        {
+            return String.Format(CultureInfo.InvariantCulture, "ICollection<{0}>", GetTypeName(collectionType.TypeUsage, modelNamespace));
+        }
+
+        var typeName = _code.Escape(edmType.MetadataProperties
+                                .Where(p => p.Name == ExternalTypeNameAttributeName)
+                                .Select(p => (string)p.Value)
+                                .FirstOrDefault())
+            ?? (modelNamespace != null && edmType.NamespaceName != modelNamespace ?
+                _code.CreateFullName(_code.EscapeNamespace(edmType.NamespaceName), _code.Escape(edmType)) :
+                _code.Escape(edmType));
+
+        if (edmType is StructuralType)
+        {
+            return typeName;
+        }
+
+        if (edmType is SimpleType)
+        {
+            var clrType = UnderlyingClrType(edmType);
+            if (!IsEnumType(edmType))
+            {
+                typeName = _code.Escape(clrType);
+            }
+
+            typeName = FixNamespaces(typeName);
+
+            return clrType.IsValueType && isNullable == true ?
+                String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", typeName) :
+                typeName;
+        }
+
+        throw new ArgumentException("edmType");
+    }
+    
+    public Type UnderlyingClrType(EdmType edmType)
+    {
+        ArgumentNotNull(edmType, "edmType");
+
+        var primitiveType = edmType as PrimitiveType;
+        if (primitiveType != null)
+        {
+            return primitiveType.ClrEquivalentType;
+        }
+
+        if (IsEnumType(edmType))
+        {
+            return GetEnumUnderlyingType(edmType).ClrEquivalentType;
+        }
+
+        return typeof(object);
+    }
+    
+    public object GetEnumMemberValue(MetadataItem enumMember)
+    {
+        ArgumentNotNull(enumMember, "enumMember");
+        
+        var valueProperty = enumMember.GetType().GetProperty("Value");
+        return valueProperty == null ? null : valueProperty.GetValue(enumMember, null);
+    }
+    
+    public string GetEnumMemberName(MetadataItem enumMember)
+    {
+        ArgumentNotNull(enumMember, "enumMember");
+        
+        var nameProperty = enumMember.GetType().GetProperty("Name");
+        return nameProperty == null ? null : (string)nameProperty.GetValue(enumMember, null);
+    }
+
+    public System.Collections.IEnumerable GetEnumMembers(EdmType enumType)
+    {
+        ArgumentNotNull(enumType, "enumType");
+
+        var membersProperty = enumType.GetType().GetProperty("Members");
+        return membersProperty != null 
+            ? (System.Collections.IEnumerable)membersProperty.GetValue(enumType, null)
+            : Enumerable.Empty<MetadataItem>();
+    }
+    
+    public bool EnumIsFlags(EdmType enumType)
+    {
+        ArgumentNotNull(enumType, "enumType");
+        
+        var isFlagsProperty = enumType.GetType().GetProperty("IsFlags");
+        return isFlagsProperty != null && (bool)isFlagsProperty.GetValue(enumType, null);
+    }
+
+    public bool IsEnumType(GlobalItem edmType)
+    {
+        ArgumentNotNull(edmType, "edmType");
+
+        return edmType.GetType().Name == "EnumType";
+    }
+
+    public PrimitiveType GetEnumUnderlyingType(EdmType enumType)
+    {
+        ArgumentNotNull(enumType, "enumType");
+
+        return (PrimitiveType)enumType.GetType().GetProperty("UnderlyingType").GetValue(enumType, null);
+    }
+
+    public string CreateLiteral(object value)
+    {
+        if (value == null || value.GetType() != typeof(TimeSpan))
+        {
+            return _code.CreateLiteral(value);
+        }
+
+        return string.Format(CultureInfo.InvariantCulture, "new TimeSpan({0})", ((TimeSpan)value).Ticks);
+    }
+    
+    public bool VerifyCaseInsensitiveTypeUniqueness(IEnumerable<string> types, string sourceFile)
+    {
+        ArgumentNotNull(types, "types");
+        ArgumentNotNull(sourceFile, "sourceFile");
+        
+        var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        if (types.Any(item => !hash.Add(item)))
+        {
+            _errors.Add(
+                new CompilerError(sourceFile, -1, -1, "6023",
+                    String.Format(CultureInfo.CurrentCulture, CodeGenerationTools.GetResourceString("Template_CaseInsensitiveTypeConflict"))));
+            return false;
+        }
+        return true;
+    }
+    
+    public IEnumerable<SimpleType> GetEnumItemsToGenerate(IEnumerable<GlobalItem> itemCollection)
+    {
+        return GetItemsToGenerate<SimpleType>(itemCollection)
+            .Where(e => IsEnumType(e));
+    }
+    
+    public IEnumerable<T> GetItemsToGenerate<T>(IEnumerable<GlobalItem> itemCollection) where T: EdmType
+    {
+        return itemCollection
+            .OfType<T>()
+            .Where(i => !i.MetadataProperties.Any(p => p.Name == ExternalTypeNameAttributeName))
+            .OrderBy(i => i.Name);
+    }
+
+    public IEnumerable<string> GetAllGlobalItems(IEnumerable<GlobalItem> itemCollection)
+    {
+        return itemCollection
+            .Where(i => i is EntityType || i is ComplexType || i is EntityContainer || IsEnumType(i))
+            .Select(g => GetGlobalItemName(g));
+    }
+
+    public string GetGlobalItemName(GlobalItem item)
+    {
+        if (item is EdmType)
+        {
+            return ((EdmType)item).Name;
+        }
+        else
+        {
+            return ((EntityContainer)item).Name;
+        }
+    }
+
+    public IEnumerable<EdmProperty> GetSimpleProperties(EntityType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type);
+    }
+    
+    public IEnumerable<EdmProperty> GetSimpleProperties(ComplexType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type);
+    }
+    
+    public IEnumerable<EdmProperty> GetComplexProperties(EntityType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is ComplexType && p.DeclaringType == type);
+    }
+    
+    public IEnumerable<EdmProperty> GetComplexProperties(ComplexType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is ComplexType && p.DeclaringType == type);
+    }
+
+    public IEnumerable<EdmProperty> GetPropertiesWithDefaultValues(EntityType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type && p.DefaultValue != null);
+    }
+    
+    public IEnumerable<EdmProperty> GetPropertiesWithDefaultValues(ComplexType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type && p.DefaultValue != null);
+    }
+
+    public IEnumerable<NavigationProperty> GetNavigationProperties(EntityType type)
+    {
+        return type.NavigationProperties.Where(np => np.DeclaringType == type);
+    }
+    
+    public IEnumerable<NavigationProperty> GetCollectionNavigationProperties(EntityType type)
+    {
+        return type.NavigationProperties.Where(np => np.DeclaringType == type && np.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many);
+    }
+    
+    public FunctionParameter GetReturnParameter(EdmFunction edmFunction)
+    {
+        ArgumentNotNull(edmFunction, "edmFunction");
+
+        var returnParamsProperty = edmFunction.GetType().GetProperty("ReturnParameters");
+        return returnParamsProperty == null
+            ? edmFunction.ReturnParameter
+            : ((IEnumerable<FunctionParameter>)returnParamsProperty.GetValue(edmFunction, null)).FirstOrDefault();
+    }
+
+    public bool IsComposable(EdmFunction edmFunction)
+    {
+        ArgumentNotNull(edmFunction, "edmFunction");
+
+        var isComposableProperty = edmFunction.GetType().GetProperty("IsComposableAttribute");
+        return isComposableProperty != null && (bool)isComposableProperty.GetValue(edmFunction, null);
+    }
+
+    public IEnumerable<FunctionImportParameter> GetParameters(EdmFunction edmFunction)
+    {
+        return FunctionImportParameter.Create(edmFunction.Parameters, _code, _ef);
+    }
+
+    public TypeUsage GetReturnType(EdmFunction edmFunction)
+    {
+        var returnParam = GetReturnParameter(edmFunction);
+        return returnParam == null ? null : _ef.GetElementType(returnParam.TypeUsage);
+    }
+    
+    public bool GenerateMergeOptionFunction(EdmFunction edmFunction, bool includeMergeOption)
+    {
+        var returnType = GetReturnType(edmFunction);
+        return !includeMergeOption && returnType != null && returnType.EdmType.BuiltInTypeKind == BuiltInTypeKind.EntityType;
+    }
+}
+
+public static void ArgumentNotNull<T>(T arg, string name) where T : class
+{
+    if (arg == null)
+    {
+        throw new ArgumentNullException(name);
+    }
+}
+#>

@@ -1,0 +1,18 @@
+﻿<!-- ko if: Obligatorio -->
+<select data-validation-engine="validate[required]"
+        class="form-control" data-bind="
+    options: Data,
+    optionsText: DisplayText,
+    optionsValue: DisplayValue,
+    value : Input,
+    enable: Enable,
+    optionsCaption: ( VerCaption ?  TextInput: null)"></select>
+<!-- /ko -->
+<!-- ko ifnot: Obligatorio  -->
+<select class="form-control" data-bind="
+    options: Data,
+    optionsText: DisplayText,
+    optionsValue: DisplayValue,
+    value : Input,
+    enable: Enable"></select>
+<!-- /ko -->

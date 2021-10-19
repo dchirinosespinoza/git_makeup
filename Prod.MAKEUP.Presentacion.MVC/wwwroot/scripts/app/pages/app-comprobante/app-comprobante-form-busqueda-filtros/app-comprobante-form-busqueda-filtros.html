@@ -1,0 +1,81 @@
+﻿
+<div class="panel panel-default panel-custom">
+    <div class="panel-heading">
+        Datos a buscar
+    </div>
+    <div class="panel-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-sm-3">
+                    <label for="">Nro.Comprobante</label>
+                    <input type="text" class="form-control" id="txtNroComprobantePagoFiltro" placeholder="digite número de comprobante" data-bind="value:modelParent.Filtro.NroCP">
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="">Fecha Inicio</label>
+                        <div class='input-group date' data-bind="dateTimePicker: {value:modelParent.Filtro.FechaInicio}, beforeOf: new Date()">
+                            <input id="txtFechaInicio" data-bind="value:modelParent.Filtro.FechaInicio" type="text" class="form-control">
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="">Fecha Fin</label>
+                        <div class='input-group date' data-bind="dateTimePicker: {value:modelParent.Filtro.FechaFin}, beforeOf: new Date()">
+                            <input id="txtFechaFin" data-bind="value:modelParent.Filtro.FechaFin" type="text" class="form-control">
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="display:none;">
+                    <label for="">Nro.Comprobante</label>
+                    <input type="text" class="form-control" id="txtNroComprobanteFiltro" placeholder="digite número de comprobante" data-bind="value:modelParent.Filtro.NroComprobante">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="">Nro.SIAF</label>
+                    <input type="text" class="form-control" id="txtNroSIAFFiltro" placeholder="digite número de SIAF" data-bind="value:modelParent.Filtro.NroSIAF">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="">Nro.O/S</label>
+                    <input type="text" class="form-control" id="txtNroOSFiltro" placeholder="digite número de O/S" data-bind="value:modelParent.Filtro.NroOS">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="">Nro.O/C</label>
+                    <input type="text" class="form-control" id="txtNroOCFiltro" placeholder="digite número de O/C" data-bind="value:modelParent.Filtro.NroOC">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="">Doc. Otros</label>
+                    <input type="text" class="form-control" id="txtNroDOFiltro" placeholder="digite número de otros documentos" data-bind="value:modelParent.Filtro.NroDO">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="">Empresa</label>
+                    <input type="text" class="form-control" id="txtRazonSocialFiltro" placeholder="digite de la empresa" data-bind="value:modelParent.Filtro.RazonSocial">
+                </div>
+            </div>
+        </div>
+        <input id="hf_estado" type="hidden" data-bind="value:modelParent.Filtro.Estado" />
+        </div>
+        <div class="panel-footer text-center">
+            <button type="button" class="btn btn-primary-custom" data-bind="click:modelParent.Buscar"><i class="fa fa-search" aria-hidden="true"></i> Buscar</button>
+            <button type="button" class="btn btn-default-custom" data-bind="click:Reset"><i class="fa fa-eraser" aria-hidden="true"></i> Limpiar</button>
+        </div>
+    </div>

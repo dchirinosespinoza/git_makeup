@@ -1,0 +1,91 @@
+﻿
+<div class="panel panel-default panel-custom">
+    <div class="panel-heading">
+        Datos a buscar
+    </div>
+    <div class="panel-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-sm-3">
+                    <label for="">Nro.Comprobante</label>
+                    <input type="text" class="form-control" id="txtNroCP" placeholder="digite número de comprobante" data-bind="value:modelParent.Filtro.NroCP">
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="">Fecha Préstamo Desde</label>
+                        <div class='input-group date' data-bind="dateTimePicker: {value:modelParent.Filtro.FechaInicio}, beforeOf: new Date()">
+                            <input id="txtFechaInicio" data-bind="value:modelParent.Filtro.FechaInicio" type="text" class="form-control">
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="">Hasta</label>
+                        <div class='input-group date' data-bind="dateTimePicker: {value:modelParent.Filtro.FechaFin}, beforeOf: new Date()">
+                            <input id="txtFechaFin" data-bind="value:modelParent.Filtro.FechaFin" type="text" class="form-control">
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="display:none;">
+                    <label for="">Nro.Comprobante</label>
+                    <input type="text" class="form-control" id="txtNroComprobante" placeholder="digite número de comprobante" data-bind="value:modelParent.Filtro.NroComprobante">
+                </div>
+            </div>            
+        </div>
+        <div class="row">
+            <!--<div class="col-sm-4">
+                <div class="form-group">
+                    <label for="" class="col-sm-3 control-label">Usuario</label>
+                    <div class="col-sm-9">
+                        <select class="form-control input-sm"
+                                data-bind="options: modelParent.Usuarios,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--todos--',
+                                                value:modelParent.Filtro.Usuario
+                                                "></select>
+                    </div>
+                </div>
+            </div>-->
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="" class="col-sm-3 control-label">Oficina</label>
+                    <div class="col-sm-9">
+                        <select class="form-control input-sm"
+                                data-bind="options: modelParent.Dependencias,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--todos--',
+                                                value:modelParent.Filtro.CodigoDependencia
+                                                "></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="" class="col-sm-3 control-label">Estado</label>
+                    <div class="col-sm-9">
+                        <select class="form-control input-sm"
+                                data-bind="options: modelParent.Estados,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--todos--',
+                                                value:modelParent.Filtro.idEstadoPrestamo
+                                                "></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="panel-footer text-center">
+        <button type="button" class="btn btn-primary-custom" data-bind="click:modelParent.Buscar"><i class="fa fa-search" aria-hidden="true"></i> Buscar</button>
+        <button type="button" class="btn btn-default-custom" data-bind="click:Reset"><i class="fa fa-eraser" aria-hidden="true"></i> Limpiar</button>
+    </div>
+</div>

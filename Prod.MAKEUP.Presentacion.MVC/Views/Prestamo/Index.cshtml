@@ -1,0 +1,36 @@
+﻿
+@using Release.Helper.WebKoMvc.Extensions
+<ol class="breadcrumb">
+    <li><a href="@Html.ResourcePath("Home/Index")">Inicio</a></li>
+    <li class="active">Buscar Comprobantes</li>
+</ol>
+<!--CABECERA-->
+<div class="row">
+    <div class="col-sm-8">
+        <div class="page-header-custom">
+            <h1 class="title-custom">Préstamos de Comprobantes de Pago</h1>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <p class="text-right">
+            <button type="button" class="btn btn-primary-custom" data-bind="click:MostrarRegistrar"><i class="fa fa-plus-circle" aria-hidden="true"></i> Registrar Préstamo</button>
+        </p>
+    </div>
+</div>
+
+<!--FILTROS-->
+<app-prestamo-form-busqueda-filtros params="modelParent: $root"></app-prestamo-form-busqueda-filtros>
+
+<!--GRILLA-->
+<app-prestamo-form-busqueda-grid params="modelParent: $root"></app-prestamo-form-busqueda-grid>
+
+<!--MODAL REGISTRAR-->
+<app-prestamo-form-modal-registrar params="modelParent: $root"></app-prestamo-form-modal-registrar>
+
+<!--DACE-->
+<!--<app-comprobante-form-historial-grid params="modelParent: $root"></app-comprobante-form-historial-grid>-->
+
+
+@section scripts {
+    @Html.InitPageMainModule("views/prestamo/index")
+}

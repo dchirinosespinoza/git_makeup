@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="b6bd86db3e0b4ec78a2c39c512519290" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="Modelo.persona" Width="1.5" PointX="1.25" PointY="0.875" />
+        <EntityTypeShape EntityType="Modelo.cancha" Width="1.5" PointX="7.875" PointY="15.875" />
+        <EntityTypeShape EntityType="Modelo.disciplina" Width="1.5" PointX="3.375" PointY="14.125" />
+        <EntityTypeShape EntityType="Modelo.equipo" Width="1.5" PointX="12.375" PointY="11.5" />
+        <EntityTypeShape EntityType="Modelo.fixture" Width="1.5" PointX="12.375" PointY="18.875" />
+        <EntityTypeShape EntityType="Modelo.institucion" Width="1.5" PointX="3.375" PointY="10.875" />
+        <EntityTypeShape EntityType="Modelo.institucion_disciplina" Width="1.5" PointX="5.625" PointY="10.75" />
+        <EntityTypeShape EntityType="Modelo.institucion_disciplina_categoria" Width="1.5" PointX="7.875" PointY="11" />
+        <EntityTypeShape EntityType="Modelo.intento" Width="1.5" PointX="19.125" PointY="14.375" />
+        <EntityTypeShape EntityType="Modelo.jugador" Width="1.5" PointX="10.875" PointY="4.375" />
+        <EntityTypeShape EntityType="Modelo.partido" Width="1.5" PointX="14.625" PointY="18.75" />
+        <EntityTypeShape EntityType="Modelo.partido_equipo" Width="1.5" PointX="16.875" PointY="14.125" />
+        <EntityTypeShape EntityType="Modelo.perfil" Width="1.5" PointX="3.375" PointY="6.125" />
+        <EntityTypeShape EntityType="Modelo.persona_disciplina" Width="1.5" PointX="8.625" PointY="7.25" />
+        <EntityTypeShape EntityType="Modelo.ranking" Width="1.5" PointX="12.375" PointY="7.5" />
+        <EntityTypeShape EntityType="Modelo.sede" Width="1.5" PointX="5.625" PointY="15.75" />
+        <EntityTypeShape EntityType="Modelo.set" Width="1.5" PointX="16.875" PointY="20.125" />
+        <EntityTypeShape EntityType="Modelo.sysdiagrams" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Modelo.tiempo" Width="1.5" PointX="16.875" PointY="17.875" />
+        <EntityTypeShape EntityType="Modelo.torneo" Width="1.5" PointX="5.625" PointY="18.25" />
+        <EntityTypeShape EntityType="Modelo.torneo_disciplina" Width="1.5" PointX="10.875" PointY="14.375" />
+        <EntityTypeShape EntityType="Modelo.torneo_disciplina_categoria" Width="1.5" PointX="10.125" PointY="10.625" />
+        <EntityTypeShape EntityType="Modelo.usuario" Width="1.5" PointX="5.625" PointY="5.75" />
+        <AssociationConnector Association="Modelo.FK_cancha_sede" />
+        <AssociationConnector Association="Modelo.FK_institucion_disciplina_disciplina" />
+        <AssociationConnector Association="Modelo.FK_persona_disciplina_disciplina" />
+        <AssociationConnector Association="Modelo.FK_equipo_torneo_disciplina_categoria" />
+        <AssociationConnector Association="Modelo.FK_partido_equipo_equipo" />
+        <AssociationConnector Association="Modelo.FK_fixture_torneo_disciplina_categoria" />
+        <AssociationConnector Association="Modelo.FK_partido_fixture" />
+        <AssociationConnector Association="Modelo.FK_institucion_disciplina_institucion" />
+        <AssociationConnector Association="Modelo.FK_sede_institucion" />
+        <AssociationConnector Association="Modelo.FK_torneo_institucion" />
+        <AssociationConnector Association="Modelo.FK_usuario_institucion" />
+        <AssociationConnector Association="Modelo.FK_institucion_disciplina_categoria_institucion_disciplina" />
+        <AssociationConnector Association="Modelo.FK_torneo_disciplina_institucion_disciplina" />
+        <AssociationConnector Association="Modelo.FK_torneo_disciplina_categoria_institucion_disciplina_categoria" />
+        <AssociationConnector Association="Modelo.FK_intento_partido_equipo" />
+        <AssociationConnector Association="Modelo.FK_jugador_persona_disciplina" />
+        <AssociationConnector Association="Modelo.FK_partido_equipo_partido" />
+        <AssociationConnector Association="Modelo.FK_set_partido" />
+        <AssociationConnector Association="Modelo.FK_tiempo_partido" />
+        <AssociationConnector Association="Modelo.FK_persona_disciplina_persona" />
+        <AssociationConnector Association="Modelo.FK_usuario_persona" />
+        <AssociationConnector Association="Modelo.FK_ranking_torneo_disciplina_categoria" />
+        <AssociationConnector Association="Modelo.FK_torneo_disciplina_torneo" />
+        <AssociationConnector Association="Modelo.FK_torneo_disciplina_categoria_torneo_disciplina" />
+        <AssociationConnector Association="Modelo.usuario_perfil" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

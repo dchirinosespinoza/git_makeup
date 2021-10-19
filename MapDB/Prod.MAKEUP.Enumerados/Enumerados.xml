@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <entidad>
+    <add NombreTabla = "dbo.SECTOR" Codigo = "ID" Descripcion = "DESCRIPCION" ></add>
+    <add NombreTabla = "dbo.TIPO_PERSONA" Codigo = "ID_TIPO_PERSONA" Descripcion = "DESCRIPCION" ></add>
+    <add NombreTabla = "dbo.VISTA_TIPO_IDENTIFICACION" Codigo = "CODIGO" Descripcion = "DESCRIPCION" NombreEnumerado="TIPO_DOCUMENTO"></add>
+  </entidad>
+  <grupo>
+    <!--TODOS LOS ENUMERADOS-->
+    <!--<add NombreTabla = "dbo.SECTOR"  Codigo = "ID" Sql ="SELECT e.NombreTabla,e.Codigo,Enumerado = e.Nombre FROM dbo.enumerados e" ></add>-->
+  </grupo>
+</root>

@@ -1,0 +1,45 @@
+﻿
+@using Release.Helper.WebKoMvc.Extensions
+<ol class="breadcrumb">
+    <li><a href="@Html.ResourcePath("Home/Index")">Inicio</a></li>
+    <li class="active">Buscar Comprobantes</li>
+</ol>
+<!--CABECERA-->
+<div class="row">
+    <div class="col-sm-8">
+        <div class="page-header-custom">
+            <h1 class="title-custom">Búsqueda y Registro de Comprobantes de Pago</h1>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <p class="text-right">
+            <button type="button" class="btn btn-primary-custom" id="btnMostrarRegistrar" data-bind="click:MostrarRegistrar"><i class="fa fa-plus-circle" aria-hidden="true"></i> Registrar Comprobante</button>
+        </p>
+    </div>
+</div>
+
+<!--FILTROS-->
+<app-comprobante-form-busqueda-filtros params="modelParent: $root"></app-comprobante-form-busqueda-filtros>
+
+<!--GRILLA-->
+<app-comprobante-form-busqueda-grid params="modelParent: $root"></app-comprobante-form-busqueda-grid>
+
+<!--MODAL REGISTRAR-->
+<app-comprobante-form-modal-registrar params="modelParent: $root"></app-comprobante-form-modal-registrar>
+
+<!--MODAL CONCEPTO-->
+<app-comprobante-form-modal-concepto params="modelParent: $root"></app-comprobante-form-modal-concepto>
+
+<!--MODAL FLUJO-->
+<app-comprobante-form-modal-flujo params="modelParent: $root"></app-comprobante-form-modal-flujo>
+
+<!--MODAL DESCARGA ADJUNTOS-->
+<app-comprobante-form-modal-descargaradjuntos params="modelParent: $root"></app-comprobante-form-modal-descargaradjuntos>
+
+<!--DACE-->
+<!--<app-comprobante-form-historial-grid params="modelParent: $root"></app-comprobante-form-historial-grid>-->
+
+
+@section scripts {
+    @Html.InitPageMainModule("views/comprobante/index")
+}

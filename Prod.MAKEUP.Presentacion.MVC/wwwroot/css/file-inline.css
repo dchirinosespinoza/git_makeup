@@ -1,0 +1,46 @@
+/*BEGIN => app-file-inline*/
+
+.file-input-wrapper {
+    /*overflow: hidden;*/
+    position: relative;
+}
+
+    .file-input-wrapper > input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        height: 100%;
+        z-index: 3;
+    }
+
+    .file-input-wrapper > .btn-file-input {
+        display: inline-block;
+    }
+
+    .file-input-wrapper .popover-title {
+        background-color: #990719 !important;
+        color: #ffffff !important;
+        padding-right: 5px;
+        padding-left: 13px;
+    }
+
+    .file-input-wrapper .popover {
+        width: 650px !important;
+    }
+
+.no-side-paddings {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.popover-header-button {
+    float: right;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+
+/*END => app-file-inline*/

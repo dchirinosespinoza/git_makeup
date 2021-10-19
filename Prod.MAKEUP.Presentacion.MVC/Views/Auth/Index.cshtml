@@ -1,0 +1,95 @@
+﻿
+@using Release.Helper.WebKoMvc.Extensions
+
+<style>
+    body {
+        /*background-image: url('images/makeup-back.jpg');*/
+        background-color: #cccccc;
+        background-image: linear-gradient(gray, white);
+    }
+
+    .login_btn {
+        width: 100%;
+        background: #c0392b !important;
+        color: white !important;
+    }
+
+        .login_btn:focus {
+            box-shadow: none !important;
+            outline: 0px !important;
+        }
+
+    .login_container {
+        padding: 0 2rem;
+    }
+
+    .input-group-addon {
+        color: white !important;
+        background-color: #c0392b !important;
+    }
+
+    .input_user, .input_pass:focus {
+        box-shadow: none !important;
+        outline: 0px !important;
+    }
+
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #c0392b !important;
+    }
+</style>
+@*<head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    </head>*@
+<body>
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">LOGIN</div>
+            <div class="panel-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            <div class="input-group mb-3">
+                                <div class="input-group-addon">
+                                    <span class="fa fa-user"></span>
+                                </div>
+                                <input type="text" name="" class="form-control input_user" value="" placeholder="username">
+                            </div>
+                        </div>
+                    </div> <br />
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            <div class="input-group mb-3">
+                                <div class="input-group-addon">
+                                    <span class="fa fa-key"></span>
+                                </div>
+                                <input type="password" name="" class="form-control input_pass" value="" placeholder="password">
+                            </div>
+                        </div>
+                    </div> <br />
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customControlInline">
+                                    <label class="custom-control-label" for="customControlInline">Remember me</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-5">
+                            <a class="btn btn-danger" href="@Html.ResourcePath("Comprobante/Index")" role="button" data-bind="click : login">Login</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-footer">Panel Footer</div>
+        </div>
+    </div>
+
+ </body>
+
+
+@section scripts {
+    @Html.InitPageMainModule("views/auth/login")
+}

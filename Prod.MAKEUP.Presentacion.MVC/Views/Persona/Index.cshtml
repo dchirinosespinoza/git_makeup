@@ -1,0 +1,34 @@
+﻿
+@using Release.Helper.WebKoMvc.Extensions
+<ol class="breadcrumb">
+    <li><a href="@Html.ResourcePath("Home/Index")">Inicio</a></li>
+    <li class="active">Buscar personas</li>
+</ol>
+<!--CABECERA-->
+<div class="row">
+    <div class="col-sm-8">
+        <div class="page-header-custom">
+            <h1 class="title-custom">Búsqueda y actualizacion de datos de Personas</h1>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <p class="text-right">
+            <button type="button" class="btn btn-primary-custom" data-bind="click:MostrarRegistrar"><i class="fa fa-plus-circle" aria-hidden="true"></i> Registrar persona</button>
+        </p>
+    </div>
+</div>
+
+<!--FILTROS-->
+<app-persona-form-busqueda-filtros params="modelParent: $root"></app-persona-form-busqueda-filtros>
+
+<!--GRILLA-->
+<app-persona-form-busqueda-grid params="modelParent: $root"></app-persona-form-busqueda-grid>
+
+<!--MODAL REGISTRAR-->
+<app-persona-form-modal-registrar params="modelParent: $root"></app-persona-form-modal-registrar>
+<app-persona-form-historial-grid params="modelParent: $root"></app-persona-form-historial-grid>
+
+
+@section scripts {
+    @Html.InitPageMainModule("views/persona/index")
+}

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="dsMAKEUP">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=SRVSQLDEV01;Initial Catalog=DB_MAKEUP</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>0861e6eb-673c-46b8-a731-9bb282b74b4b</DataSourceID>
+</RptDataSource>

@@ -1,0 +1,252 @@
+﻿<div class="modal modal-custom fade" id="modalDescargaAdjuntos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <!--<h4 class="modal-title" id="myModalLabel" data-bind="text: Comprobante.id() > 0 ? 'Agregar Concepto' : 'Agregar Concepto'"></h4>-->
+                <h4 class="modal-title" id="myModalLabel1" data-bind="text: titulo()"></h4>
+            </div>
+            <div class="modal-body pb-0">
+                <form id="frmComprobante1">
+
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="">Nro. Comprobante</label>
+                                <input type="text" class="form-control input-sm" placeholder=""
+                                       id="txtNroCP1" name="txtNroCP"
+                                       data-bind="value:Comprobante.NroCP, enable: false">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="">Nro.SIAF</label>
+                                <input type="text" class="form-control input-sm" maxlength="20"
+                                       id="txtNroSIAF1" name="txtNroSIAF"
+                                       data-validation-engine="validate[required]"
+                                       data-bind="value:Comprobante.NroSIAF, enable: false">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="">Fecha de Giro</label>
+                                <div class='input-group date' data-bind="dateTimePicker: {value:Comprobante.Fecha}, beforeOf: new Date()">
+                                    <input id="txtFecha1" data-bind="value:Comprobante.Fecha, enable: false" type="text" class="form-control">
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="">Nro.OS</label>
+                                <input type="text" class="form-control input-sm" maxlength="20"
+                                       id="txtNroOS" name="txtNroOS"
+                                       data-validation-engine="validate[required]"
+                                       data-bind="value:Comprobante.NroOS, enable: false">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="">Nro.OC</label>
+                                <input type="text" class="form-control input-sm" maxlength="20"
+                                       id="txtNroOC1" name="txtNroOC"
+                                       data-validation-engine="validate[required]"
+                                       data-bind="value:Comprobante.NroOC, enable: false">
+                            </div>
+                        </div>
+                        <div class="col-sm-2" style="display:none;">
+                            <div class="form-group">
+                                <label for="">Nro. Comprobante</label>
+                                <input type="text" class="form-control input-sm" placeholder=""
+                                       id="txtNroComprobante1" name="txtNroComprobante"
+                                       data-bind="value:Comprobante.id, enable: false">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="">Tipo Hoja de Trámite</label>
+                                <select class="form-control input-sm" data-bind="value:Comprobante.TipoHoja, enable: false">
+                                    <option value="">--Seleccione--</option>
+                                    <option value="I">Interno</option>
+                                    <option value="E">Externo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="">Expediente SITRADOC</label>
+                                <input type="text" class="form-control input-sm" placeholder=""
+                                       id="txtExpSitradoc1" name="txtExpSitradoc"
+                                       data-bind="value:Comprobante.ExpedienteSitradoc, enable: false">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="">Razón Social</label>
+                                <input type="text" class="form-control input-sm" maxlength="20"
+                                       id="txtRazonSocial1" name="txtRazonSocial"
+                                       data-validation-engine="validate[required]"
+                                       data-bind="value:Comprobante.RazonSocial, enable: false">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="">Monto</label>
+                                <input type="text" class="form-control input-sm" maxlength="20"
+                                       id="txtMontoConcepto1" name="txtMonto"
+                                       data-validation-engine="validate[required]"
+                                       data-bind="value:Comprobante.Monto, enable: false">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="" class="col-sm-6 control-label">Tipo de Pago</label>
+                                <select class="form-control input-sm"
+                                        id="txtTipoPago1"
+                                        data-bind="options: modelParent.TipoPago,
+                                                optionsText: 'Text',
+                                                optionsValue: 'Value',
+                                                optionsCaption: '--Seleccione--',
+                                                value:Comprobante.idTipoPago,
+                                                enable: false"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3 text-right"><label class="control-label">Archivo: </label></div>
+                        <div class="col-sm-9">
+
+                            <!--tiposPermitidos : '.jpg,.jpeg,.jpe,.gif,.pdf,.gif,.png,.ppt,.pptx,.doc,.xls,.xlsx,.docx,.avi,.mpeg,.mov,.wmv,.mp4,.Wma,.Wav,.midi,.mp3',-->
+                            <app-file-inline params="viewContainer : $component,
+                                                                FormName : 'Codigo',
+                                                                ControlName : 'file3',
+                                                                ParamsExtra : {},
+                                                                debugMode : false,
+                                                                idArchivo : Comprobante.CodArchivo,
+                                                                tiposPermitidos : '.pdf',
+                                                                pesoMaximoEnMB : 20,
+                                                                puedeCargarArchivo : false,
+                                                                puedeDescargarArchivo : true,
+                                                                puedeEliminarArchivo : false,
+                                                                tamañoControles : 'def',
+                                                                mostrarCajaDeTexto : true,
+                                                                mostrarAlertasExito : true,
+                                                                puedeVerHistorialArchivo:true,
+                                                                usarBorradores : false,
+                                                                esObligatorio:true,
+                                                                fnCallBackSuccess: function(data, name){ $component.fnCargaArchivoExito(data,name,1);},
+                                                                fnCallBackError: function(data, name){ $component.fnCargaArchivoError(data,name,1); }">
+                            </app-file-inline>
+                            <!-- <pre data-bind="text : JSON.stringify(ko.mapping.toJS(Comprobante), undefined, 2) "></pre> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3 text-right"><label class="control-label">Comprobante Firmado: </label></div>
+                        <div class="col-sm-9">
+
+                            <!--tiposPermitidos : '.jpg,.jpeg,.jpe,.gif,.pdf,.gif,.png,.ppt,.pptx,.doc,.xls,.xlsx,.docx,.avi,.mpeg,.mov,.wmv,.mp4,.Wma,.Wav,.midi,.mp3',-->
+                            <app-file-inline params="viewContainer : $component,
+                                                                FormName : 'CodigoComprobante',
+                                                                ControlName : 'file4',
+                                                                ParamsExtra : {},
+                                                                debugMode : false,
+                                                                idArchivo : Comprobante.CodComprobanteFirmado,
+                                                                tiposPermitidos : '.pdf',
+                                                                pesoMaximoEnMB : 20,
+                                                                puedeCargarArchivo : false,
+                                                                puedeDescargarArchivo : true,
+                                                                puedeEliminarArchivo : false,
+                                                                tamañoControles : 'def',
+                                                                mostrarCajaDeTexto : true,
+                                                                mostrarAlertasExito : true,
+                                                                puedeVerHistorialArchivo:true,
+                                                                usarBorradores : false,
+                                                                esObligatorio:false,
+                                                                fnCallBackSuccess: function(data, name){ $component.fnCargaArchivoExito(data,name,1);},
+                                                                fnCallBackError: function(data, name){ $component.fnCargaArchivoError(data,name,1); }">
+                            </app-file-inline>
+                            <!-- <pre data-bind="text : JSON.stringify(ko.mapping.toJS(Comprobante), undefined, 2) "></pre> -->
+                        </div>
+                    </div>
+                    <div class="row" id="div_agregar_concepto2">                        
+                        <div class="col-sm-2">
+                            <br />
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn-secondary-custom" id="btnDescarga" data-bind="click:DescargarAdjuntos"><i class="fa fa-download" aria-hidden="true"></i> Descargar Adjuntos</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--GRILLA-->
+            <div class="table-responsive">
+                <table class="table table-custom table-striped table-bordered table-hover table-condensed" id="chkArchivo">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th style="display:none;">idDoc</th>
+                            <th>Nombre Archivo</th>
+                            <th>Descargar</th>
+                            <th>Selección</th>
+                        </tr>
+                    </thead>
+                    <!-- ko if: GridDetalle.TotalRows() > 0 -->
+                    <tbody data-bind="foreach: GridDetalle.Data">
+                        <tr>
+                            <td data-bind="text:($index()+1)"></td>
+                            <td data-bind="text:archivo_adjunto, visible: false"></td>
+                            <td data-bind="text:nombre_adjunto"></td>
+                            <td class="text-center">
+                                <app-file-inline params="viewContainer : $component,
+                                                                FormName : 'Codigo',
+                                                                ControlName : 'file5',
+                                                                ParamsExtra : {},
+                                                                debugMode : false,
+                                                                idArchivo : archivo_adjunto,
+                                                                tiposPermitidos : '.pdf',
+                                                                pesoMaximoEnMB : 20,
+                                                                puedeCargarArchivo : false,
+                                                                puedeDescargarArchivo : true,
+                                                                puedeEliminarArchivo : false,
+                                                                tamañoControles : 'def',
+                                                                mostrarCajaDeTexto : false,
+                                                                mostrarAlertasExito : true,
+                                                                puedeVerHistorialArchivo:false,
+                                                                usarBorradores : false,
+                                                                esObligatorio:true,
+                                                                fnCallBackSuccess: function(data, name){ $component.fnCargaArchivoExito(data,name,1);},
+                                                                fnCallBackError: function(data, name){ $component.fnCargaArchivoError(data,name,1); }">
+                                </app-file-inline>
+                            </td>
+                            <td> <input type="checkbox" data-bind="click:$component.fnCheck, checked: false, visible: true, value: archivoadjunto"> </td>
+                        </tr>
+
+                    </tbody>
+    <!-- /ko -->
+                        <!-- ko if: GridDetalle.TotalRows() == 0 -->
+<tbody>
+                        <tr>
+                            <td colspan="13">No se encontraron registros</td>
+                        </tr>
+                    </tbody>
+                    <!-- /ko -->
+                </table>
+            </div>
+            <app-paginator params="grid: GridDetalle"></app-paginator>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default-custom" data-dismiss="modal"><i class="fa fa-close" aria-hidden="true"></i> Salir</button>
+            </div>
+        </div>
+    </div>
+</div>

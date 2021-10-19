@@ -1,0 +1,67 @@
+﻿@using Release.Helper.WebKoMvc.Extensions
+@{
+    var root = ApplicationHelpers.ModelBase();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="~/images/favicon.ico">
+    <title>MAKEUP | Búsqueda de Comprobantes de Pago</title>
+    <link href="@Html.StylesPath("scripts/app/support/lib/jquery-ui/themes/base/minified/jquery-ui.min.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("scripts/app/support/lib/bootstrap/dist/css/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("scripts/app/support/lib/font-awesome/css/font-awesome.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("scripts/app/support/lib/pnotify/dist/pnotify.min.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("scripts/app/support/lib/jquery-bootstrap-scrolling-tabs/dist/jquery.scrolling-tabs.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("scripts/app/support/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("fonts/IconConsultas/style.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("css/custom.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("css/file-inline.css")" rel="stylesheet" />
+    <link href="@Html.StylesPath("scripts/app/support/lib/jQuery-Validation-Engine/css/validationEngine.jquery.css")" rel="stylesheet" />
+
+    @Html.InitPageMainHeader(root, "_produce")
+</head>
+<body>
+    <div id="@root.Container">
+        <div class="navbar-fixed-top">
+            <header class="header-principal hidden-xs">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a class="navbar-brand" href="@Html.ResourcePath("Home/Index")">
+                                <span class="logo-principal">
+                                    MAKEUP
+                                </span>
+                                <span class="nombre-logo-principal">
+                                    Búsqueda de <br/>Comprobantes de Pago
+                                </span>
+                            </a>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <!--<h3 class="text-danger"><b>Información del Banco de la Nación</b></h3>-->
+                            <img src="@Html.ResourcePath("images/logo-produce.png")">
+                        </div>
+                    </div>
+                </div>
+            </header>
+            @Html.Partial("_LoginPartial")
+        </div>
+        <div class="container contenido-principal">
+            @RenderBody()
+        </div>
+        <footer class="footer-principal">
+            <div class="container text-center">
+                <p class="text-muted">Ministerio de la Producción © Todos los Derechos Reservados 2018.</p>
+            </div>
+        </footer>
+    </div>
+    <script src="@Html.ScriptsPath("support/lib/requirejs/require.js")"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+

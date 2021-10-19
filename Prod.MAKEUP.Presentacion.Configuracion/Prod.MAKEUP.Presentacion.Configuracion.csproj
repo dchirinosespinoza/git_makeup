@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.0.1" />
+    <PackageReference Include="Release.Helper" Version="1.1.9" />
+    <PackageReference Include="Release.Helper.ReportingServices" Version="1.0.2" />
+    <PackageReference Include="Release.Helper.WebKoMvc" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Prod.MAKEUP.Entidades\Prod.MAKEUP.Entidades.csproj" />
+    <ProjectReference Include="..\Prod.MAKEUP.Enumerados\Prod.MAKEUP.Enumerados.csproj" />
+  </ItemGroup>
+
+</Project>
